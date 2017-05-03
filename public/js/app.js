@@ -11,7 +11,7 @@ let numRepuls = 0
 let masses = []
 let repulsions = []
 let particles = []
-const numParticles = 55
+let numParticles = window.innerWidth / 18
 const c = {
   red: 'rgba(255, 30, 40, 0.25)',
   white: 'rgba(255, 255, 255, 0.25)',
@@ -54,11 +54,9 @@ function update () {
     drawCircle(p, c.white)
     for (var j = particles.length - 1; j >= 0; j--) {
       var pp = particles[j]
-      if (i != j) {
-        var dist = utils.distance(p, pp)
-        if (dist < utils.clamp(window.innerWidth / 6, 10, 250) && dist > 10) {
-          drawLine(p, pp, c.white)
-        }
+      var dist = utils.distance(p, pp)
+      if (dist < utils.clamp(window.innerWidth / 8, 10, 250) && dist > 10) {
+        drawLine(p, pp, c.white)
       }
     };
   }
@@ -66,6 +64,8 @@ function update () {
 }
 
 function createParticles () {
+  numParticles = window.innerWidth / 18
+  particles = []
   for (var i = 0; i < numParticles; i++) {
     var p = particle.create(
 			utils.randomRange(50, width - 50),
@@ -135,6 +135,7 @@ function wrapBounds (p) {
 function windowResizeHandler () {
   width = canvas.width = window.innerWidth
   height = canvas.height = window.innerHeight
+  createParticles()
 }
 
 init()
