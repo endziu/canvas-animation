@@ -503,23 +503,22 @@ const particle = __webpack_require__(1)
 const vector = __webpack_require__(3)
 const utils = __webpack_require__(0)
 
-const canvas = document.getElementById('canvas')
-const context = canvas.getContext('2d')
 let width
 let height
 let index = 0
-let particles = []
 let numMasses = 0
+let numRepuls = 0
 let masses = []
 let repulsions = []
-let numRepuls = 0
-const numParticles = 45
+let particles = []
+const numParticles = 55
 const c = {
-  c1: 'rgba(255, 30, 40, 0.25)',
-  c2: 'rgba(0, 0, 0, 0.25)',
-  c3: 'rgba(0, 0, 0, 0.25)',
-  c4: 'rgba(30, 255, 40, 0.25)'
+  red: 'rgba(255, 30, 40, 0.25)',
+  white: 'rgba(255, 255, 255, 0.25)',
+  green: 'rgba(30, 255, 40, 0.25)'
 }
+const canvas = document.getElementById('canvas')
+const context = canvas.getContext('2d')
 
 function init () {
   canvas.oncontextmenu = function (e) {
@@ -541,24 +540,24 @@ function update () {
   for (var i = 0; i < numMasses; i++) {
     var m = masses[i]
     m.update()
-    drawCircle(m, c.c1)
+    drawCircle(m, c.red)
   }
   for (var i = 0; i < numRepuls; i++) {
     var r = repulsions[i]
     r.update()
-    drawCircle(r, c.c4)
+    drawCircle(r, c.green)
   }
   for (var i = particles.length - 1; i >= 0; i--) {
     var p = particles[i]
     p.update()
     wrapBounds(p)
-    drawCircle(p, c.c2)
+    drawCircle(p, c.white)
     for (var j = particles.length - 1; j >= 0; j--) {
       var pp = particles[j]
       if (i != j) {
         var dist = utils.distance(p, pp)
         if (dist < utils.clamp(window.innerWidth / 6, 10, 250) && dist > 10) {
-          drawLine(p, pp, c.c3)
+          drawLine(p, pp, c.white)
         }
       }
     };
