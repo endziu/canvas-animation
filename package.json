@@ -1,11 +1,11 @@
 {
   "name": "endziu",
   "version": "1.0.0",
-  "description": "",
+  "description": "homepage",
   "main": "app.js",
   "scripts": {
     "build": "webpack",
-    "start": "node ./server.js"
+    "start": "pm2 start server.js --name=\"endziu\""
   },
   "author": "",
   "license": "ISC",
