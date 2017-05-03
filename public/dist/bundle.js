@@ -557,7 +557,7 @@ function update () {
       var pp = particles[j]
       if (i != j) {
         var dist = utils.distance(p, pp)
-        if (dist < (window.innerWidth / 6) && dist > 6) {
+        if (dist < utils.clamp(window.innerWidth / 6, 10, 250) && dist > 10) {
           drawLine(p, pp, c.c3)
         }
       }
