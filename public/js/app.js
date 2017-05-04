@@ -5,7 +5,6 @@ const utils = require('./utils')
 
 let width
 let height
-let index = 0
 let numMasses = 0
 let numRepuls = 0
 let masses = []
@@ -80,32 +79,27 @@ function createParticles () {
 }
 
 function mouseDownHandler (event) {
-  console.log(index)
+
   var x = event.clientX - canvas.offsetLeft
   var y = event.clientY - canvas.offsetTop
-  if (index < 10) {
-    if (event.button == 0) {
-      index++
-      var m = particle.create(x, y, 0, 0)
-      m.mass = 30
-      m.radius = 5
-      numMasses += 1
-      masses.push(m)
-      for (var i = 0; i < numParticles; i++) {
-        particles[i].addGravitation(m)
-      }
+  if (event.button == 0) {
+    var m = particle.create(x, y, 0, 0)
+    m.mass = 30
+    m.radius = 5
+    numMasses += 1
+    masses.push(m)
+    for (var i = 0; i < numParticles; i++) {
+      particles[i].addGravitation(m)
     }
-
-    if (event.button == 2) {
-      index++
-      var r = particle.create(x, y, 0, 0)
-      r.mass = 80
-      r.radius = 5
-      numRepuls += 1
-      repulsions.push(r)
-      for (var i = 0; i < numParticles; i++) {
-        particles[i].addRepulsion(r)
-      }
+  }
+  if (event.button == 2) {
+    var r = particle.create(x, y, 0, 0)
+    r.mass = 80
+    r.radius = 5
+    numRepuls += 1
+    repulsions.push(r)
+    for (var i = 0; i < numParticles; i++) {
+      particles[i].addRepulsion(r)
     }
   }
 }
@@ -135,6 +129,10 @@ function wrapBounds (p) {
 function windowResizeHandler () {
   width = canvas.width = window.innerWidth
   height = canvas.height = window.innerHeight
+  numMasses = 0
+  numRepuls = 0
+  masses = []
+  repulsions = []
   createParticles()
 }
 
