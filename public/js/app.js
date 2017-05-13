@@ -17,6 +17,7 @@ let particles = []
 
 const init = () => {
   window.addEventListener('resize', windowResizeHandler, false)
+  window.addEventListener('mousedown', mouseDownHandler, false)
   if (canvas && canvas.getContext) {
     context.globalCompositeOperation = 'destination-over'  
     canvas.oncontextmenu = function (e) {
@@ -55,7 +56,7 @@ const createParticles = (numParticles) => {
 			utils.randomRange(0.5, 2.0),
 			utils.randomRange(0, 2 * Math.PI)
 		)
-    p.friction = 1
+    p.friction = 0.99
     particles.push(p)
   }
 }
@@ -66,6 +67,23 @@ const windowResizeHandler = () => {
   numParticles = utils.clamp(parseInt(width / 10 ,10), 25, 200)
   maxDist = utils.clamp(parseInt(width / 8, 10), 50, 200)
   createParticles(numParticles)
+}
+
+function mouseDownHandler (event) {
+
+  var x = event.clientX - canvas.offsetLeft
+  var y = event.clientY - canvas.offsetTop
+  if (event.button == 0) {
+    var m = particle.create(x, y, 0, 0)
+    m.mass = 30
+
+    for (var i = 0; i < numParticles; i++) {
+      particles[i].addGravitation(m)
+    }
+  }
+  if (event.button == 2) {
+
+  }
 }
 
 init()
