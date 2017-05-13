@@ -10,8 +10,8 @@ const context = canvas.getContext('2d')
 let width = canvas.width = window.innerWidth
 let height = canvas.height = window.innerHeight
 
-let numParticles = parseInt(width / 10 ,10)
-let maxDist = parseInt(width / 15, 10)
+let numParticles = utils.clamp(parseInt(width / 10 ,10),25, 200)
+let maxDist = utils.clamp(parseInt(width / 8, 10),50, 200)
 
 let particles = []
 
@@ -36,10 +36,10 @@ const update = () => {
 const updateAndDraw = (current_particle, index, arr) => {
   wrapBounds(current_particle, width, height)
   current_particle.update()
-  drawCircle(context, 2, current_particle)
+  drawCircle(context, utils.clamp(parseInt(width / 200),2,15), current_particle)
 
   particles.forEach((item, i, arr) => {
-    if (i > index - 1 && i < arr.length && item.distanceTo(current_particle) < maxDist) {
+    if (i > index - 1 && i < arr.length && current_particle.distanceTo(item) < maxDist) {
       const line_width = 5 - (current_particle.distanceTo(item) / maxDist) * 5
       drawLine(context, current_particle, item, line_width)
     }
@@ -60,11 +60,11 @@ const createParticles = (numParticles) => {
   }
 }
 
-function windowResizeHandler() {
+const windowResizeHandler = () => {
   width = canvas.width = window.innerWidth
   height = canvas.height = window.innerHeight
-  numParticles = parseInt(width / 10 ,10)
-  maxDist = parseInt(width / 15, 10)
+  numParticles = utils.clamp(parseInt(width / 10 ,10), 25, 200)
+  maxDist = utils.clamp(parseInt(width / 8, 10), 50, 200)
   createParticles(numParticles)
 }
 
