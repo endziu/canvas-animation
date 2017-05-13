@@ -1,5 +1,5 @@
 const drawCircle = (ctx, r, p) => {
-  ctx.fillStyle = '#999'
+  ctx.fillStyle = '#fff'
   ctx.beginPath()
   ctx.arc(p.position.getX(), p.position.getY(), r, 0, Math.PI * 2, false)
   ctx.fill()
@@ -10,7 +10,7 @@ const drawLine = (context, p1, p2, line_width) => {
   context.beginPath()
   context.moveTo(p1.position.getX(), p1.position.getY())
   context.lineTo(p2.position.getX(), p2.position.getY())
-  context.strokeStyle = '#fff'
+  context.strokeStyle = '#060'
   context.stroke()
 }
 
