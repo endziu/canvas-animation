@@ -61,7 +61,7 @@ const createParticles = (numParticles) => {
 			utils.randomRange(0.5, 2.0),
 			utils.randomRange(0, 2 * Math.PI)
 		)
-    p.friction = 0.99
+    p.friction = 0.999
     particles.push(p)
   }
 }
@@ -80,7 +80,7 @@ function mouseDownHandler (event) {
   var y = event.clientY - canvas.offsetTop
   if (event.button == 0) {
     var m = particle.create(x, y, 0, 0)
-    m.mass = 60
+    m.mass = 120
     for (var i = 0; i < numParticles; i++) {
       particles[i].addGravitation(m)
     }
