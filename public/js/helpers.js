@@ -1,5 +1,5 @@
-const drawCircle = (ctx, r, p) => {
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'
+const drawCircle = (ctx, r, p, color) => {
+  ctx.fillStyle = color || 'rgba(255,255,255,0.5)'
   ctx.beginPath()
   ctx.arc(p.position.getX(), p.position.getY(), r, 0, Math.PI * 2, false)
   ctx.fill()

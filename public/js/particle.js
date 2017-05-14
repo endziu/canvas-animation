@@ -6,6 +6,7 @@ module.exports = {
   position: vector.create(0,0),
   velolcity: vector.create(0,0),
   friction: 1,
+  mass: null,
   gravitations: null,
 
   create: function (x, y, speed, direction, grav) {
@@ -28,7 +29,7 @@ module.exports = {
     var dx = p2.position.getX() - this.position.getX(),
       dy = p2.position.getY() - this.position.getY(),
       distSQ = dx * dx + dy * dy,
-      dist = utils.clamp(Math.sqrt(distSQ), 50, 500),
+      dist = utils.clamp(Math.sqrt(distSQ), 50, 250),
       force = p2.mass / distSQ,
       ax = dx / dist * force,
       ay = dy / dist * force,

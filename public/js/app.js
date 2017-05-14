@@ -37,14 +37,19 @@ const update = () => {
 const updateAndDraw = (current_particle, index, arr) => {
   wrapBounds(current_particle, width, height)
   current_particle.update()
-  drawCircle(context, utils.clamp(parseInt(width / 200),2,15), current_particle)
 
-  particles.forEach((item, i, arr) => {
-    if (i > index - 1 && i < arr.length && current_particle.distanceTo(item) < maxDist) {
-      const line_width = 5 - (current_particle.distanceTo(item) / maxDist) * 5
-      drawLine(context, current_particle, item, line_width)
-    }
-  })
+  if(!current_particle.mass) {
+    drawCircle(context, utils.clamp(parseInt(width / 200),2,15), current_particle)
+    particles.forEach((item, i, arr) => {
+      if (i > index - 1 && i < arr.length && current_particle.distanceTo(item) < maxDist) {
+        const line_width = 5 - (current_particle.distanceTo(item) / maxDist) * 5
+        drawLine(context, current_particle, item, line_width)
+      }
+    })
+  } else {
+    drawCircle(context, utils.clamp(parseInt(width / 250),2,10), current_particle, 'rgba(255,0,0,1.0)')
+  }
+  
 }
 
 const createParticles = (numParticles) => {
@@ -75,11 +80,11 @@ function mouseDownHandler (event) {
   var y = event.clientY - canvas.offsetTop
   if (event.button == 0) {
     var m = particle.create(x, y, 0, 0)
-    m.mass = 30
-
+    m.mass = 60
     for (var i = 0; i < numParticles; i++) {
       particles[i].addGravitation(m)
     }
+    particles.push(m)
   }
   if (event.button == 2) {
 
