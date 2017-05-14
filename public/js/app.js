@@ -2,80 +2,76 @@ const raf = require('./raf')()
 const particle = require('./particle')
 const vector = require('./vector')
 const utils = require('./utils')
+const { drawCircle, drawLine, wrapBounds } = require('./helpers')
 
-let width
-let height
-let numMasses = 0
-let numRepuls = 0
-let masses = []
-let repulsions = []
-let particles = []
-let numParticles = window.innerWidth / 18
-const c = {
-  red: 'rgba(255, 30, 40, 0.25)',
-  white: 'rgba(255, 255, 255, 0.25)',
-  green: 'rgba(30, 255, 40, 0.25)'
-}
 const canvas = document.getElementById('canvas')
 const context = canvas.getContext('2d')
 
-function init () {
-  canvas.oncontextmenu = function (e) {
-    e.preventDefault()
-  }
+let width = canvas.width = window.innerWidth
+let height = canvas.height = window.innerHeight
+
+let numParticles = utils.clamp(parseInt(width / 10 ,10),25, 200)
+let maxDist = utils.clamp(parseInt(width / 8, 10),50, 200)
+
+let particles = []
+
+const init = () => {
+  window.addEventListener('resize', windowResizeHandler, false)
+  window.addEventListener('mousedown', mouseDownHandler, false)
   if (canvas && canvas.getContext) {
-    context.globalCompositeOperation = 'destination-over'
-    window.addEventListener('mousedown', mouseDownHandler, false)
-    window.addEventListener('resize', windowResizeHandler, false)
-    windowResizeHandler()
-    createParticles()
+    context.globalCompositeOperation = 'destination-over'  
+    canvas.oncontextmenu = function (e) {
+      e.preventDefault()
+    }
+    createParticles(numParticles)
     update()
   }
 }
 
-
-function update () {
+const update = () => {
   context.clearRect(0, 0, width, height)
-  for (var i = 0; i < numMasses; i++) {
-    var m = masses[i]
-    m.update()
-    drawCircle(m, c.red)
-  }
-  for (var i = 0; i < numRepuls; i++) {
-    var r = repulsions[i]
-    r.update()
-    drawCircle(r, c.green)
-  }
-  for (var i = particles.length - 1; i >= 0; i--) {
-    var p = particles[i]
-    p.update()
-    wrapBounds(p)
-    drawCircle(p, c.white)
-    for (var j = particles.length - 1; j >= 0; j--) {
-      var pp = particles[j]
-      var dist = utils.distance(p, pp)
-      if (dist < utils.clamp(window.innerWidth / 8, 10, 250) && dist > 10) {
-        drawLine(p, pp, c.white)
-      }
-    };
-  }
+  particles.map(updateAndDraw)
   window.requestAnimationFrame(update)
 }
 
-function createParticles () {
-  numParticles = window.innerWidth / 18
+const updateAndDraw = (current_particle, index, arr) => {
+  wrapBounds(current_particle, width, height)
+  current_particle.update()
+
+  if(!current_particle.mass) {
+    drawCircle(context, utils.clamp(parseInt(width / 200),2,15), current_particle)
+    particles.forEach((item, i, arr) => {
+      if (i > index - 1 && i < arr.length && current_particle.distanceTo(item) < maxDist) {
+        const line_width = 5 - (current_particle.distanceTo(item) / maxDist) * 5
+        drawLine(context, current_particle, item, line_width)
+      }
+    })
+  } else {
+    drawCircle(context, utils.clamp(parseInt(width / 250),2,10), current_particle, 'rgba(255,0,0,1.0)')
+  }
+  
+}
+
+const createParticles = (numParticles) => {
   particles = []
   for (var i = 0; i < numParticles; i++) {
     var p = particle.create(
 			utils.randomRange(50, width - 50),
 			utils.randomRange(50, height - 50),
-			utils.randomRange(0.1, 0.5),
+			utils.randomRange(0.5, 2.0),
 			utils.randomRange(0, 2 * Math.PI)
 		)
-    p.radius = 8
-    p.friction = 1
+    p.friction = 0.999
     particles.push(p)
   }
+}
+
+const windowResizeHandler = () => {
+  width = canvas.width = window.innerWidth
+  height = canvas.height = window.innerHeight
+  numParticles = utils.clamp(parseInt(width / 10 ,10), 25, 200)
+  maxDist = utils.clamp(parseInt(width / 8, 10), 50, 200)
+  createParticles(numParticles)
 }
 
 function mouseDownHandler (event) {
@@ -84,56 +80,15 @@ function mouseDownHandler (event) {
   var y = event.clientY - canvas.offsetTop
   if (event.button == 0) {
     var m = particle.create(x, y, 0, 0)
-    m.mass = 30
-    m.radius = 5
-    numMasses += 1
-    masses.push(m)
+    m.mass = 120
     for (var i = 0; i < numParticles; i++) {
       particles[i].addGravitation(m)
     }
+    particles.push(m)
   }
   if (event.button == 2) {
-    var r = particle.create(x, y, 0, 0)
-    r.mass = 80
-    r.radius = 5
-    numRepuls += 1
-    repulsions.push(r)
-    for (var i = 0; i < numParticles; i++) {
-      particles[i].addRepulsion(r)
-    }
+
   }
-}
-
-function drawCircle (p, color) {
-  context.fillStyle = color
-  context.beginPath()
-  context.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false)
-  context.fill()
-}
-
-function drawLine (p1, p2, color) {
-  context.beginPath()
-  context.moveTo(p1.x, p1.y)
-  context.lineTo(p2.x, p2.y)
-  context.strokeStyle = color
-  context.stroke()
-}
-
-function wrapBounds (p) {
-  if (p.x < 0) p.x = width
-  if (p.x > width) p.x = 0
-  if (p.y < 0) p.y = height
-  if (p.y > height) p.y = 0
-}
-
-function windowResizeHandler () {
-  width = canvas.width = window.innerWidth
-  height = canvas.height = window.innerHeight
-  numMasses = 0
-  numRepuls = 0
-  masses = []
-  repulsions = []
-  createParticles()
 }
 
 init()

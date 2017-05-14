@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "build": "webpack",
-    "dev": "pm2 start server.js --name=\"endziu\" --watch \"public/dist\"",
+    "dev": "pm2 start server.js --name=\"endziu\" --watch \"public/dist\" && webpack --watch",
     "start": "pm2 start server.js --name=\"endziu\""
   },
   "author": "",
